@@ -14,8 +14,6 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Created by menggao.qi on 2018/10/15.
@@ -55,9 +53,9 @@ public class App {
             }
             System.out.println(userCount);
             Iterator<Multiset.Entry<String>> iterator = userCount.entrySet().iterator();
-            while (iterator.hasNext()) {
+            while (iterator.hasNext()){
                 Multiset.Entry<String> entry = iterator.next();
-                System.out.println(entry.getElement() + "=" + entry.getCount());
+                System.out.println(entry.getElement()+"="+entry.getCount());
             }
 
             System.out.println();
@@ -92,32 +90,24 @@ public class App {
     }
 
     private static UserInfo getUserInfo(String userInfoString) {
-        String level = getString(userInfoString, "【", "】");
+        System.out.println(userInfoString);
+        String level = userInfoString.substring(1, 3);
         String username;
         String userId;
-        if (userInfoString.indexOf('<') > 0) {
-            username = getString(userInfoString, "】", "<");
-            userId = getString(userInfoString, "<", ">");
+        if (userInfoString.indexOf('(') > 0) {
+            username = userInfoString.substring(4, userInfoString.lastIndexOf('('));
+            userId = userInfoString.substring(userInfoString.lastIndexOf('(') + 1, userInfoString.length() - 1);
         } else {
-            username = getString(userInfoString, "】", "(");
-            userId = getString(userInfoString, "(", ")");
+            username = userInfoString.substring(4, userInfoString.lastIndexOf('<'));
+            userId = userInfoString.substring(userInfoString.lastIndexOf('<') + 1, userInfoString.length() - 1);
+
         }
-        System.out.println();
 
         return new UserInfo(level, username, userId);
 
     }
 
-    public static String getString(String string, String prefix, String suffix) {
-        String regex = prefix+"(.*?)"+suffix;
-        Pattern pattern = Pattern.compile(regex);
-        System.out.println(pattern);
-        Matcher matcher = pattern.matcher(string);
-        if (matcher.find()) {
-            return matcher.group(0);
-        }
-        return "";
-    }
+
 
     public static Ordering<Chatting_record> getOrdering() {
         Ordering<Chatting_record> ordering = Ordering.from(new Comparator<Chatting_record>() {
