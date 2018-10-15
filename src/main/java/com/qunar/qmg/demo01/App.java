@@ -7,10 +7,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Multiset;
 import com.google.common.collect.Ordering;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -46,19 +43,27 @@ public class App {
                 userCount.add(recordAfterExplain.getUserInfo().getUsername());
             }
             Collections.sort(recordList, getOrdering());
-
+            StringBuilder stringBuilder = new StringBuilder(recordList.size());
             for (Chatting_record record :
                     recordList) {
-                System.out.println(record);
+                stringBuilder.append(record);
             }
-            System.out.println(userCount);
+            //排序好的聊天记录写入文件
+            FileWriter writer = new FileWriter("orderedmsg.txt");
+            writer.write(stringBuilder.toString());
+            writer.flush();
             Iterator<Multiset.Entry<String>> iterator = userCount.entrySet().iterator();
+            StringBuilder answers = new StringBuilder();
             while (iterator.hasNext()){
                 Multiset.Entry<String> entry = iterator.next();
-                System.out.println(entry.getElement()+"="+entry.getCount());
+                String answer = entry.getElement()+"    "+entry.getCount()+"\n";
+                answers.append(answer);
             }
-
-            System.out.println();
+//            System.out.println(answers);
+            writer = new FileWriter("count.txt");
+            writer.write(answers.toString());
+            writer.flush();
+            writer.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -90,7 +95,6 @@ public class App {
     }
 
     private static UserInfo getUserInfo(String userInfoString) {
-        System.out.println(userInfoString);
         String level = userInfoString.substring(1, 3);
         String username;
         String userId;
